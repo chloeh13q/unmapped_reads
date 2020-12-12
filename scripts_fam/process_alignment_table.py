@@ -101,7 +101,7 @@ def count_alignment(directory):
                 if row.R2_ref.startswith('chr') or row.R2_ref.startswith('HLA'):
                     viral_hg38_counts[row.R1_ref][row.R2_ref] += 1
                 
-            elif row.R2_ref.startswith('NC') or row.R2_ref.startswith('VIRL'):
+            if row.R2_ref.startswith('NC') or row.R2_ref.startswith('VIRL'):
                 viral_counts[row.R2_ref][row.R1_ref] += 1
                 
                 if row.R1_ref.startswith('chr') or row.R1_ref.startswith('HLA'):
