@@ -110,7 +110,7 @@ def count_alignment(directory):
             # count all bacterial reads
             if row.R1_ref.startswith('BACT') or row.R1_ref.startswith('ARCH') or row.R1_ref.startswith('EUKY'):
                 bacterial_counts[row.R1_ref][row.R2_ref] += 1
-            elif row.R2_ref.startswith('BACT') or row.R2_ref.startswith('ARCH') or row.R2_ref.startswith('EUKY'):
+            if row.R2_ref.startswith('BACT') or row.R2_ref.startswith('ARCH') or row.R2_ref.startswith('EUKY'):
                 bacterial_counts[row.R2_ref][row.R1_ref] += 1
         
         # make dictionary for viral read counts
