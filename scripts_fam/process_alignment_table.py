@@ -86,8 +86,7 @@ def count_alignment(directory):
                  'is_proper_pair': bool}
         file = glob.glob(os.path.join(directory, folder, '*alignment_table.csv'))[0]
         table = pd.read_csv(file, dtype=dtype, index_col=0)
-        table['R1_MAPQ'] = [0 if np.isnan(i) else i for i in table.R1_MAPQ]
-        table['R2_MAPQ'] = [0 if np.isnan(i) else i for i in table.R2_MAPQ]
+        table[['R1_MAPQ', 'R2_MAPQ']] = table[['R1_MAPQ','R2_MAPQ']].fillna(value=0)
         
         viral_counts = defaultdict(lambda: defaultdict(int))    # all reads mapped to viruses
         bacterial_counts = defaultdict(lambda: defaultdict(int))    # all reads mapped to bacteria
