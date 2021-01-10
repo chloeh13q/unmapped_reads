@@ -69,15 +69,13 @@ def plot_unmapped_reads(folder, ylim, window = 10000000):
     
     
 def count_alignment(directory):
-    MAPQ_THRESH=55
+    MAPQ_THRESH = 55
     folders = [folder for folder in os.listdir(directory) if os.path.isdir(os.path.join(directory, folder))]
     folders = sorted(folders)
     
     virus_family_tallied = []
-    # virus_family_counts = []
     bacteria_family_tallied = []
-    # bacteria_family_counts = []
-    viral_hg38_tallied = []
+#     viral_hg38_tallied = []
     
     for folder in folders:
         print(folder + '..')
@@ -93,32 +91,32 @@ def count_alignment(directory):
         
         viral_counts = defaultdict(lambda: defaultdict(int))    # all reads mapped to viruses
         bacterial_counts = defaultdict(lambda: defaultdict(int))    # all reads mapped to bacteria
-        viral_hg38_counts = defaultdict(lambda: defaultdict(int))    # reads with one end mapped to virus and the other end mapped to hg38+decoy
+#         viral_hg38_counts = defaultdict(lambda: defaultdict(int))    # reads with one end mapped to virus and the other end mapped to hg38+decoy
         
         # iterate by row
         for row in table.itertuples():
             # count all viral reads
             if row.R1_ref.startswith('NC') or row.R1_ref.startswith('VIRL'):
-                if (row.R1_ref>=MAPQ_THRESH) or ((row.R2_ref>=MAPQ_THRESH) and (row.R2_ref==row.R1_ref)):
+                if (row.R1_MAPQ >= MAPQ_THRESH) or ((row.R2_MAPQ >= MAPQ_THRESH) and (row.R2_ref == row.R1_ref)):
                     viral_counts[row.R1_ref][row.R2_ref] += 1
                 
-                # count viral/hg38 read pairs
-                if row.R2_ref.startswith('chr') or row.R2_ref.startswith('HLA'):
-                    viral_hg38_counts[row.R1_ref][row.R2_ref] += 1
+#                 # count viral/hg38 read pairs
+#                 if row.R2_ref.startswith('chr') or row.R2_ref.startswith('HLA'):
+#                     viral_hg38_counts[row.R1_ref][row.R2_ref] += 1
                 
             if row.R2_ref.startswith('NC') or row.R2_ref.startswith('VIRL'):
-                if (row.R2_ref>=MAPQ_THRESH) or ((row.R1_ref>=MAPQ_THRESH) and (row.R1_ref==row.R2_ref)):
+                if (row.R2_MAPQ >= MAPQ_THRESH) or ((row.R1_MAPQ >= MAPQ_THRESH) and (row.R1_ref == row.R2_ref)):
                     viral_counts[row.R2_ref][row.R1_ref] += 1
                 
-                if row.R1_ref.startswith('chr') or row.R1_ref.startswith('HLA'):
-                    viral_hg38_counts[row.R2_ref][row.R1_ref] += 1
+#                 if row.R1_ref.startswith('chr') or row.R1_ref.startswith('HLA'):
+#                     viral_hg38_counts[row.R2_ref][row.R1_ref] += 1
                 
             # count all bacterial reads
             if row.R1_ref.startswith('BACT') or row.R1_ref.startswith('ARCH') or row.R1_ref.startswith('EUKY'):
-                if (row.R1_ref>=MAPQ_THRESH) or ((row.R2_ref>=MAPQ_THRESH) and (row.R2_ref==row.R1_ref)):
+                if (row.R1_MAPQ >= MAPQ_THRESH) or ((row.R2_MAPQ >= MAPQ_THRESH) and (row.R2_ref == row.R1_ref)):
                     bacterial_counts[row.R1_ref][row.R2_ref] += 1
             if row.R2_ref.startswith('BACT') or row.R2_ref.startswith('ARCH') or row.R2_ref.startswith('EUKY'):
-                if (row.R2_ref>=MAPQ_THRESH) or ((row.R1_ref>=MAPQ_THRESH) and (row.R1_ref==row.R2_ref)):
+                if (row.R2_MAPQ >= MAPQ_THRESH) or ((row.R1_MAPQ >= MAPQ_THRESH) and (row.R1_ref == row.R2_ref)):
                     bacterial_counts[row.R2_ref][row.R1_ref] += 1
         
         # make dictionary for viral read counts
@@ -152,16 +150,16 @@ def count_alignment(directory):
         viral_hg38_df = pd.DataFrame.from_dict(viral_hg38_counts)
         viral_hg38_df.fillna(0, inplace=True)
         viral_hg38_df['sampleID'] = folder
-        viral_hg38_tallied.append(viral_hg38_df)
+#         viral_hg38_tallied.append(viral_hg38_df)
         
-    return virus_family_tallied, bacteria_family_tallied, viral_hg38_tallied
+    return virus_family_tallied, bacteria_family_tallied
 
 
 def make_combined_table(directory):
     
     folders = sorted([os.path.join(directory, folder) for folder in os.listdir(directory) if os.path.isdir(os.path.join(directory, folder))])
     
-    virus_tallied, bacteria_tallied, viral_hg38_tallied = count_alignment(directory)
+    virus_tallied, bacteria_tallied = count_alignment(directory)
     
     # make virus table
     virus_df = []
@@ -207,6 +205,6 @@ def make_combined_table(directory):
                     pd.DataFrame(relationship, index=['relationship']), 
                     bacteria_df])
     
-    viral_hg38_df = pd.concat(viral_hg38_tallied, axis=0).fillna(0)
+#     viral_hg38_df = pd.concat(viral_hg38_tallied, axis=0).fillna(0)
     
-    return virus_df, bacteria_df, viral_hg38_df
+    return virus_df, bacteria_df

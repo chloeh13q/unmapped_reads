@@ -13,7 +13,7 @@ print(f'Generating tables for batch ID {batchid}')
 
 if not os.path.isdir(f'/scratch/groups/dpwall/personal/chloehe/unmapped_reads/batch_tables/{batchid}'):
     os.mkdir(f'/scratch/groups/dpwall/personal/chloehe/unmapped_reads/batch_tables/{batchid}')
-virus_df, bacteria_df, viral_hg38_df = make_combined_table(directory)
+virus_df, bacteria_df = make_combined_table(directory)
 virus_df.to_csv(f'/scratch/groups/dpwall/personal/chloehe/unmapped_reads/batch_tables/{batchid}/{batchid}.viral.csv')
 bacteria_df.to_csv(f'/scratch/groups/dpwall/personal/chloehe/unmapped_reads/batch_tables/{batchid}/{batchid}.bacterial.csv')
-viral_hg38_df.to_csv(f'/scratch/groups/dpwall/personal/chloehe/unmapped_reads/batch_tables/{batchid}/{batchid}.viral_hg38.csv')
+# viral_hg38_df.to_csv(f'/scratch/groups/dpwall/personal/chloehe/unmapped_reads/batch_tables/{batchid}/{batchid}.viral_hg38.csv')
